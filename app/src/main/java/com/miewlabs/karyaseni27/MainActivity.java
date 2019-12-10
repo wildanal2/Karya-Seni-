@@ -22,20 +22,54 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
 public class MainActivity extends AppCompatActivity {
 
+    FloatingActionButton btnCam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView botNav = (BottomNavigationView) findViewById(R.id.bottomNavigationView);
+        BottomNavigationView botNav = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         botNav.setOnNavigationItemSelectedListener(navListener);
+
+        btnCam = findViewById(R.id.fab);
+        btnCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog dialog = new BottomSheetDialog( MainActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.menu_camera_layout);
+
+                RelativeLayout btnCam = dialog.findViewById(R.id.btn_opncamera);
+                RelativeLayout btnGalery = dialog.findViewById(R.id.btn_opngalery);
+
+                btnCam.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        checkCameraHardware(MainActivity.this);
+
+                        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        startActivityForResult(i,0);
+
+                        Toast.makeText(MainActivity.this, "Camera clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                btnGalery.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(MainActivity.this, "Gallery clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialog.show();
+            }
+        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -49,48 +83,16 @@ public class MainActivity extends AppCompatActivity {
                             selectedFrag = new DasboardFragment();
                             getSupportFragmentManager().beginTransaction().replace(R.id.frame_main_home,selectedFrag).commit();
                             break;
-                        case R.id.nav_camera:
-                            BottomSheetDialog dialog = new BottomSheetDialog( MainActivity.this);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.menu_camera_layout);
-
-                            RelativeLayout btnCam = dialog.findViewById(R.id.btn_opncamera);
-                            RelativeLayout btnGalery = dialog.findViewById(R.id.btn_opngalery);
-
-                            btnCam.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    checkCameraHardware(MainActivity.this);
-
-                                    Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    startActivityForResult(i,0);
-
-                                    Toast.makeText(MainActivity.this, "Camera clicked", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            btnGalery.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Toast.makeText(MainActivity.this, "Gallery clicked", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            dialog.show();
-                            break;
                         case R.id.nav_setting:
                             selectedFrag = new SettingFragment();
                             getSupportFragmentManager().beginTransaction().replace(R.id.frame_main_home,selectedFrag).commit();
                             break;
                     }
-                    
+
                     return true;
                 }
             };
 
-
-    public void setListener(){
-
-    }
 
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
