@@ -34,16 +34,17 @@ import com.orhanobut.dialogplus.OnItemClickListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
-    String currImagePath = null;
     public static final int IMAGE_REQUEST = 1;
     public static final String TAG = "MainActivity";
-
-    FloatingActionButton btnCam;
+    private Uri mImageUri;
+    private FloatingActionButton btnCam;
+    private String action = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +68,12 @@ public class MainActivity extends AppCompatActivity {
                 btnCam.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        action = "cam";
                         dialog.dismiss();
                         checkCameraHardware(MainActivity.this);
-
+                        // create intent cam
                         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
                         if (cameraIntent.resolveActivity(getPackageManager()) != null){
                             Log.i(TAG, "on resolve not null img null");
                             File imageFile = null;
@@ -82,8 +85,8 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             if (imageFile != null){
-                                Uri imageUri = FileProvider.getUriForFile(MainActivity.this,"com.miewlabs.karyaseni27.fileprovider",imageFile);
-                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                mImageUri = FileProvider.getUriForFile(MainActivity.this,"com.miewlabs.karyaseni27.fileprovider",imageFile);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
                                 Log.i(TAG, "onClick: img not null");
 
                                 startActivityForResult(cameraIntent, IMAGE_REQUEST);
@@ -97,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
                 btnGalery.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        action = "file";
+                        dialog.dismiss();
+                        openFileChooser();
                         Toast.makeText(MainActivity.this, "Gallery clicked", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -139,13 +145,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode,Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: requestCode:"+requestCode+" | resultCode:"+resultCode);
+        Log.d(TAG, "onActivityResult: aksi:"+action);
+        //ifsisa && data != null && data.getData()!=null
+        if (requestCode == IMAGE_REQUEST && resultCode==RESULT_OK ){
+            // jika aksi dari pilihan file images
+            if (action == "file"){
+                mImageUri = data.getData();
+            }
 
-        Log.i(TAG, "onActivityResult: data:"+resultCode);
-        if (resultCode != 0 ){
-            Log.i(TAG, "onActivityResult: CurImagePath : "+currImagePath);
+            Log.i(TAG, "onActivityResult| result:"+resultCode+" |reqcod:"+requestCode+" |data:"+mImageUri.toString() );
 
             Intent in = new Intent(getApplicationContext(),Main2Activity.class);
-            in.putExtra("img_path",currImagePath);
+            in.putExtra("img_path",mImageUri.toString());
             startActivity(in);
         }
     }
@@ -157,8 +169,14 @@ public class MainActivity extends AppCompatActivity {
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
         File imgFile = File.createTempFile(img_name,".jpg",storageDir);
-        currImagePath = imgFile.getAbsolutePath();
-
         return imgFile;
+    }
+
+    //open image
+    private void openFileChooser(){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent,IMAGE_REQUEST);
     }
 }
