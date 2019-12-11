@@ -3,6 +3,7 @@ package com.miewlabs.karyaseni27;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.content.Context;
@@ -10,8 +11,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -27,7 +31,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity {
+
+    String currImagePath = null;
+    public static final int IMAGE_REQUEST = 1;
+    public static final String TAG = "MainActivity";
 
     FloatingActionButton btnCam;
 
@@ -43,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         btnCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BottomSheetDialog dialog = new BottomSheetDialog( MainActivity.this);
+                final BottomSheetDialog dialog = new BottomSheetDialog( MainActivity.this);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.menu_camera_layout);
 
@@ -53,12 +67,31 @@ public class MainActivity extends AppCompatActivity {
                 btnCam.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         checkCameraHardware(MainActivity.this);
 
-                        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        startActivityForResult(i,0);
+                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        if (cameraIntent.resolveActivity(getPackageManager()) != null){
+                            Log.i(TAG, "on resolve not null img null");
+                            File imageFile = null;
 
-                        Toast.makeText(MainActivity.this, "Camera clicked", Toast.LENGTH_SHORT).show();
+                            try {
+                                imageFile = getImageFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (imageFile != null){
+                                Uri imageUri = FileProvider.getUriForFile(MainActivity.this,"com.miewlabs.karyaseni27.fileprovider",imageFile);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                Log.i(TAG, "onClick: img not null");
+
+                                startActivityForResult(cameraIntent, IMAGE_REQUEST);
+                            }
+                        }
+
+                        //END
+                        Toast.makeText(MainActivity.this,"Sukses ", Toast.LENGTH_SHORT).show();
                     }
                 });
                 btnGalery.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     Fragment selectedFrag = null; //Fragment Yang akan ditampilkan
-
                     switch (menuItem.getItemId()){
                         case R.id.nav_dasboard:
                             selectedFrag = new DasboardFragment();
@@ -88,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                             getSupportFragmentManager().beginTransaction().replace(R.id.frame_main_home,selectedFrag).commit();
                             break;
                     }
-
                     return true;
                 }
             };
@@ -104,11 +135,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap bit = (Bitmap) data.getExtras().get("data");
+        Log.i(TAG, "onActivityResult: data:"+resultCode);
+        if (resultCode != 0 ){
+            Log.i(TAG, "onActivityResult: CurImagePath : "+currImagePath);
 
+            Intent in = new Intent(getApplicationContext(),Main2Activity.class);
+            in.putExtra("img_path",currImagePath);
+            startActivity(in);
+        }
+    }
+
+
+    private File getImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String img_name = "IMG_"+timeStamp+"_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        File imgFile = File.createTempFile(img_name,".jpg",storageDir);
+        currImagePath = imgFile.getAbsolutePath();
+
+        return imgFile;
     }
 }
