@@ -36,7 +36,7 @@ public class ImageViewAdapter extends RecyclerView.Adapter<ImageViewAdapter.Imag
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         UploadImages cImg = mListUploads.get(position);
 
-        Picasso.get().load(cImg.getmImageUrl()).resize(640,640).centerCrop().into(holder.imgView);
+        Picasso.get().load(cImg.getmImageUrl()).resize(580,580).centerCrop().into(holder.imgView);
     }
 
     @Override
