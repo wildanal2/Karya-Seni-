@@ -23,5 +23,12 @@
         android:text="Upload"
         android:layout_gravity="center_horizontal"
         />
+    <ProgressBar
+        android:visibility="invisible"
+        android:id="@+id/progresBarloading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        />
 
 </LinearLayout>

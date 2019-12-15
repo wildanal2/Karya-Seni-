@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">karyaseni27</string>
 
-    <string name="facebook_application_id" translatable="false">548942632531364</string>
+<!--    <string name="facebook_application_id" translatable="false">548942632531364</string>-->
     <!-- Facebook Application ID, prefixed by 'fb'. Enables Chrome Custom tabs. -->
-    <string name="facebook_login_protocol_scheme" translatable="false">fb548942632531364</string>
+<!--    <string name="facebook_login_protocol_scheme" translatable="false">fb548942632531364</string>-->
+
+    <string name="facebook_app_id">806590996439377</string>
+    <string name="fb_login_protocol_scheme">fb806590996439377</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

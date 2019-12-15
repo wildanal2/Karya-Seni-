@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "405536544086-b0evpp0mip054v7rs86if385gjru6up4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.miewlabs.karyaseni27",
+            "certificate_hash": "64fbb9fc7de848b313879c4a3917d18d27b5c311"
+          }
+        },
+        {
           "client_id": "405536544086-gtakfl2806jr8na6fop3b7ro4euktsb7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

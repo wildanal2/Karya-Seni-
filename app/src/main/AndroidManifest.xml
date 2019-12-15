@@ -21,17 +21,14 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/facebook_login_protocol_scheme" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -40,7 +37,7 @@
         <activity android:name=".RegisterActivity" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_application_id" />
+            android:value="@string/facebook_app_id" />
         <provider
             android:authorities="com.miewlabs.karyaseni27.fileprovider"
             android:name="androidx.core.content.FileProvider"
@@ -53,8 +50,8 @@
         </provider>
 
     </application>
-    <uses-feature android:name="android.hardware.camera" />
 
+    <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

@@ -52,16 +52,16 @@ public class DasboardFragment extends Fragment {
 
         mRecyclerVi.setLayoutManager( new GridLayoutManager(getActivity(), 2));
 
-        mUploadList = new ArrayList<>();
         //database
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users/"+ FirebaseAuth.getInstance().getUid());
 
         mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mUploadList = new ArrayList<>();
+
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()){
                     UploadImages imgUp = postSnapshot.getValue(UploadImages.class);
-
                     mUploadList.add(imgUp);
                 }
 

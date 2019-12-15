@@ -13,6 +13,7 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -40,6 +41,7 @@ public class Main2Activity extends AppCompatActivity {
     private Uri imgPath = null;
     private String uid = null;
 
+    ProgressBar progressBar;
     PhotoView imageView;
     Button btnUpload;
     //fbase
@@ -62,9 +64,9 @@ public class Main2Activity extends AppCompatActivity {
         //finding
         imageView = findViewById(R.id.imagev);
         btnUpload = findViewById(R.id.btn_uploadfirebase);
+        progressBar = findViewById(R.id.progresBarloading);
 
         imageView.setImageURI(imgPath);
-
 
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +87,8 @@ public class Main2Activity extends AppCompatActivity {
     private void uploadFile(){
         Log.d(TAG, "uploadFile: on progres");
         Toast.makeText(this, "Uploading..", Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.VISIBLE);
+
         if (imgPath != null){
              final StorageReference fileRef = mStorageRef.child( System.currentTimeMillis()+"."+getFileExtension(imgPath) );
              fileRef.putFile(imgPath)
@@ -126,7 +130,8 @@ public class Main2Activity extends AppCompatActivity {
                      .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                          @Override
                          public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
+                             double progress = (100*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                             progressBar.setProgress((int) progress);
                          }
                      });
         }else {

@@ -162,7 +162,8 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(LoginActivity.this, "On errr", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onError: "+error.getMessage());
+                Toast.makeText(LoginActivity.this, "On errr : "+error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -191,7 +192,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
                 // ...
-                Toast.makeText(this, "Failed Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Failed Login "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -235,6 +236,7 @@ public class LoginActivity extends AppCompatActivity {
             Uri personPhoto = acct.getPhotoUrl();
 
             Toast.makeText(this, "Nam:"+personName, Toast.LENGTH_SHORT).show();
+            checkCurrentUser();
         }
     }
 
