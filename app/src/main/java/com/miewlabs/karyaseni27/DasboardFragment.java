@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +36,7 @@ public class DasboardFragment extends Fragment {
     private View v;
     private RecyclerView mRecyclerVi;
     private ImageViewAdapter mAdapter;
+    private ShimmerFrameLayout shimFrame;
     //
     private DatabaseReference mDatabaseRef;
     private List<UploadImages> mUploadList;
@@ -47,8 +49,11 @@ public class DasboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_dasboard, container, false);
 
+        //find
         mRecyclerVi = v.findViewById(R.id.recycler_view);
-        mRecyclerVi.setHasFixedSize(true);
+        shimFrame  = v.findViewById(R.id.shimmer_dasboard);
+
+        mRecyclerVi.setHasFixedSize(false);
 
         mRecyclerVi.setLayoutManager( new GridLayoutManager(getActivity(), 2));
 
@@ -64,6 +69,10 @@ public class DasboardFragment extends Fragment {
                     UploadImages imgUp = postSnapshot.getValue(UploadImages.class);
                     mUploadList.add(imgUp);
                 }
+                // showing
+                mRecyclerVi.setVisibility(View.VISIBLE);
+                shimFrame.stopShimmer();
+                shimFrame.setVisibility(View.GONE);
 
                 mAdapter = new ImageViewAdapter(getContext(), mUploadList);
                 mRecyclerVi.setAdapter(mAdapter);
@@ -78,4 +87,9 @@ public class DasboardFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        shimFrame.startShimmer();
+    }
 }
