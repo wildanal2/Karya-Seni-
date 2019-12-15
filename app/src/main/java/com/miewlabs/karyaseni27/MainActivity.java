@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView botNav = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         botNav.setOnNavigationItemSelectedListener(navListener);
 
+        //on
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_main_home,new DasboardFragment()).commit();
+
         btnCam = findViewById(R.id.fab);
         btnCam.setOnClickListener(new View.OnClickListener() {
             @Override

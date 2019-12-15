@@ -69,6 +69,7 @@ public class Main2Activity extends AppCompatActivity {
         btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnUpload.setEnabled(false);
                 uploadFile();
             }
         });
@@ -83,6 +84,7 @@ public class Main2Activity extends AppCompatActivity {
 
     private void uploadFile(){
         Log.d(TAG, "uploadFile: on progres");
+        Toast.makeText(this, "Uploading..", Toast.LENGTH_LONG).show();
         if (imgPath != null){
              final StorageReference fileRef = mStorageRef.child( System.currentTimeMillis()+"."+getFileExtension(imgPath) );
              fileRef.putFile(imgPath)
@@ -109,6 +111,7 @@ public class Main2Activity extends AppCompatActivity {
                                      mDatabaseRef.child(nameid).setValue(upl);
 
                                      Log.d(TAG, "onSuccess: Sukses insert db");
+                                     Toast.makeText(Main2Activity.this, "Sukses Upload Img", Toast.LENGTH_SHORT).show();
                                      finish();
                                  }
                              });
